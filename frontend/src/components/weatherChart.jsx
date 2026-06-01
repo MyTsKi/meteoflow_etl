@@ -44,11 +44,18 @@ export default function WeatherChart({ weatherData }) {
         borderColor: '#60a5fa',
         backgroundColor: 'rgba(96, 165, 250, 0.2)',
         tension: 0.4
+      },
+      {
+        label: 'Wind Speed (m/s)',
+        data: CronologicalData.map(registro => registro.windspeed_10m),
+        borderColor: '#faa560',
+        backgroundColor: 'rgba(250, 165, 96, 0.2)',
+        tension: 0.4
       }
     ],
   };
 
-const GraphicOptions = {
+  const GraphicOptions = {
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
