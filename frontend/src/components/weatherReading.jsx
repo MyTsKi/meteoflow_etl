@@ -10,7 +10,7 @@ export default function CurrentWeatherReading({ weatherData }) {
     return (
         <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl h-full flex flex-col justify-center">
             <h2 className="text-sm uppercase tracking-widest text-slate-400 mb-6">
-                Lectura más reciente
+                Current Reading
             </h2>
 
             <div>
@@ -22,10 +22,10 @@ export default function CurrentWeatherReading({ weatherData }) {
                 </div>
                 <div className="mt-8 pt-6 border-t border-slate-800">
                     <p className="text-slate-400 flex justify-between">
-                        Humedad relativa <span className="text-blue-400 font-medium">{weatherData.relativehumidity_2m}%</span>
+                        Relative Humidity <span className="text-blue-400 font-medium">{weatherData.relativehumidity_2m}%</span>
                     </p>
                     <p className="text-slate-400 flex justify-between">
-                        Velocidad del viento <span className="text-emerald-400 font-medium">{weatherData.windspeed_10m} km/h</span>
+                        Wind Speed <span className="text-emerald-400 font-medium">{weatherData.windspeed_10m} km/h</span>
                     </p>
                 </div>
             </div>

@@ -16,7 +16,7 @@ export default function WeatherChart({ weatherData }) {
   if (!weatherData || weatherData.length === 0) {
     return (
       <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl h-full flex items-center justify-center">
-        <p className="text-slate-600">Esperando registros para graficar.</p>
+        <p className="text-slate-600">Waiting for records to plot.</p>
       </div>
     );
   }
@@ -27,19 +27,19 @@ export default function WeatherChart({ weatherData }) {
     labels: CronologicalData.map(
       registro => {
         const localDate = new Date(registro.time);
-        return localDate.toLocaleTimeString(navigator.language, { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
+        return localDate.toLocaleDateString(navigator.language, { month: 'short', day: '2-digit' });
       }
     ),
     datasets: [
       {
-        label: 'Temperatura (°C)',
+        label: 'Temperature (°C)',
         data: CronologicalData.map(registro => registro.temperature_2m),
         borderColor: '#34d399',
         backgroundColor: 'rgba(52, 211, 153, 0.2)',
         tension: 0.4
       },
       {
-        label: 'Humedad (%)',
+        label: 'Relative Humidity (%)',
         data: CronologicalData.map(registro => registro.relativehumidity_2m),
         borderColor: '#60a5fa',
         backgroundColor: 'rgba(96, 165, 250, 0.2)',
@@ -48,11 +48,33 @@ export default function WeatherChart({ weatherData }) {
     ],
   };
 
-  const GraphicOptions = {
+const GraphicOptions = {
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
       legend: { position: 'top', labels: { color: '#94a3b8' } },
+      tooltip: {
+        backgroundColor: 'rgba(15, 23, 42, 0.95)',
+        titleColor: '#34d399',
+        padding: 12,
+        callbacks: {
+          title: (tooltipItems) => {
+            const indice = tooltipItems[0].dataIndex;
+
+            const originalRegister = CronologicalData[indice];
+            const allDate = new Date(originalRegister.time);
+
+            return allDate.toLocaleString(navigator.language, {
+              weekday: 'short',
+              day: '2-digit',
+              month: 'short',
+              hour: '2-digit',
+              minute: '2-digit',
+              hour12: true
+            });
+          }
+        }
+      }
     },
     scales: {
       y: { grid: { color: '#334155' }, ticks: { color: '#94a3b8' } },
@@ -63,7 +85,7 @@ export default function WeatherChart({ weatherData }) {
   return (
     <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl h-full">
       <h2 className="text-sm uppercase tracking-widest text-slate-400 mb-4">
-        Tendencia Histórica
+        Historical Trend
       </h2>
       <div className="h-[350px] w-full">
         <Line data={GraphicData} options={GraphicOptions} />
