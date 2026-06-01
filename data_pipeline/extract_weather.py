@@ -7,7 +7,7 @@ import json
 import pandas as pd
 # pip install sqlalchemy "psycopg[binary]"
 from sqlalchemy import create_engine
-from sqlalchemy.dialects.postgresql import insert # <-- NUEVA IMPORTACIÓN CRÍTICA
+from sqlalchemy.dialects.postgresql import insert # 
 import os 
 from dotenv import load_dotenv
 
@@ -28,25 +28,20 @@ async def extract_data_meteorologic():
             print (f"An error occurred while fetching data: {exc}")
             return None
 
-# <-- NUEVA FUNCIÓN: El motor de Upsert -->
+
 def upsert_method(table, conn, keys, data_iter):
-    # Convertimos los datos de Pandas a un formato que SQLAlchemy entienda
+
     data = [dict(zip(keys, row)) for row in data_iter]
     
-    # Preparamos la instrucción INSERT estándar de PostgreSQL
     insert_stmt = insert(table.table).values(data)
     
-    # Le decimos qué hacer si hay un conflicto (si la hora ya existe):
-    # Actualiza todas las columnas (temperatura, humedad, etc.) excepto la hora misma.
     update_columns = {col.name: col for col in insert_stmt.excluded if col.name != 'time'}
     
-    # Ensamblamos la instrucción final: ON CONFLICT DO UPDATE
     upsert_stmt = insert_stmt.on_conflict_do_update(
         index_elements=['time'],
         set_=update_columns
     )
     
-    # Ejecutamos la consulta
     conn.execute(upsert_stmt)
 
 async def main():
@@ -65,7 +60,6 @@ async def main():
         engine = create_engine(string_connection)
         
         try:
-            # <-- EL CAMBIO MÁGICO: Le pasamos nuestra nueva función en el parámetro 'method' -->
             df.to_sql(
                 "weather_history",
                 engine,

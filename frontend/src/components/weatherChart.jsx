@@ -27,7 +27,7 @@ export default function WeatherChart({ weatherData }) {
     labels: CronologicalData.map(
       registro => {
         const localDate = new Date(registro.time);
-        return localDate.toLocaleTimeString(navigator.language, { hour: '2-digit', minute: '2-digit' });
+        return localDate.toLocaleTimeString(navigator.language, { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
       }
     ),
     datasets: [

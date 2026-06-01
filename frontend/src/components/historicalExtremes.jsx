@@ -32,7 +32,6 @@ export default function HistoricalExtremes({ weatherData }) {
 
   const avgHum = Math.round(sumhumidity / weatherData.length);
 
-  // Función para formatear la fecha a un formato legible (ej. "14:00 (01/06)")
   const FormatDate = (stringDate) => {
     const date = new Date(stringDate);
     const hour = date.toLocaleTimeString(navigator.language, { hour: '2-digit', minute: '2-digit' });

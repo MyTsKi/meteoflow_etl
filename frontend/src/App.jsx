@@ -13,7 +13,6 @@ export default function App() {
   useEffect(() => {
     // Llamamos a la función limpia que extrajimos al archivo api.js
     getWeatherData().then(weatherdata_response => {
-      console.log("Datos recibidos en App.jsx:", weatherdata_response.data);
       setWeatherData(weatherdata_response.data);
       setloadWeatherData(false);
     });
