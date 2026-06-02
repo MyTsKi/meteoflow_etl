@@ -18,14 +18,14 @@ I split the project into three main pieces:
 A script that fetches hourly weather forecasts from the Open-Meteo API using `httpx` and `asyncio`. I used `pandas` to clean the JSON responses. 
 * **The interesting part:** To avoid flooding the database with duplicate rows every time the script runs, I implemented an `UPSERT` logic (`ON CONFLICT DO UPDATE`) with SQLAlchemy. It updates existing hours with fresh forecasts and only inserts truly new data.
 
-### 2. La API (Node.js & Express)
-Una API REST ligera que sirve como un puente seguro hacia la base de datos.
-* **Payload Optimizado:** Consulta la base de datos usando un límite estricto para evitar sobrecargar la memoria, devolviendo un arreglo limpio con el historial de datos meteorológicos.
+### 2. The API (Node.js & Express)
+A lightweight REST API serving as a secure bridge to the database.
+* **Optimized Payload:** Queries the database using a strict limit to prevent massive memory overhead, returning a clean array of historical weather data.
 
-### 3. El Dashboard (React & Vite)
-La interfaz frontend donde los datos cobran vida.
-* **Filtrado del lado del cliente:** Implementa un filtrado rápido de arreglos en JavaScript al vuelo (matemáticas con el objeto `Date`) para alternar al instante entre las vistas de 24 horas, 7 días y el historial completo, sin hacer peticiones de red redundantes al servidor.
-* **Visuales:** Construido con Tailwind CSS y `Chart.js` para la gráfica de series de tiempo.
-  
+### 3. The Dashboard (React & Vite)
+The frontend interface where the data comes to life.
+* **Client-Side Filtering:** Implements fast, on-the-fly JavaScript array filtering (`Date` object math) to instantly toggle between 24-hour, 7-day, and full-history views without triggering redundant network requests.
+* **Visuals:** Built with Tailwind CSS and `Chart.js` for the time-series graph.
+
 ## Live Demo
 Check out the live dashboard here: **https://meteoflow.vercel.app/**
