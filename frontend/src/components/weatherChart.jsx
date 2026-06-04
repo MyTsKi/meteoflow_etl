@@ -9,8 +9,9 @@ import {
   Legend,
 } from 'chart.js';
 import { Line } from 'react-chartjs-2';
+import zoomPlugin from 'chartjs-plugin-zoom'
 
-ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
+ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, zoomPlugin);
 
 export default function WeatherChart({ weatherData }) {
   if (!weatherData || weatherData.length === 0) {
@@ -46,7 +47,7 @@ export default function WeatherChart({ weatherData }) {
         tension: 0.4
       },
       {
-        label: 'Wind Speed (m/s)',
+        label: 'Wind Speed (km/h)',
         data: CronologicalData.map(registro => registro.windspeed_10m),
         borderColor: '#faa560',
         backgroundColor: 'rgba(250, 165, 96, 0.2)',
@@ -59,7 +60,18 @@ export default function WeatherChart({ weatherData }) {
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
-      legend: { position: 'top', labels: { color: '#94a3b8' } },
+      legend: {
+        position: 'top', labels: {
+          color: '#94a3b8',
+          usePointStyle: true
+        },
+        onHover: (event) => {
+          event.native.target.style.cursor = 'pointer';
+        },
+        onLeave: (event) => {
+          event.native.target.style.cursor = 'default';
+        }
+      },
       tooltip: {
         backgroundColor: 'rgba(15, 23, 42, 0.95)',
         titleColor: '#34d399',
@@ -81,7 +93,22 @@ export default function WeatherChart({ weatherData }) {
             });
           }
         }
-      }
+      },
+      zoom: {
+        pan: {
+          enabled: true,
+          mode: 'x',
+        },
+        zoom: {
+          wheel: {
+            enabled: true,
+          },
+          pinch: {
+            enabled: true,
+          },
+          mode: 'x',
+        }
+      },
     },
     scales: {
       y: { grid: { color: '#334155' }, ticks: { color: '#94a3b8' } },

@@ -65,7 +65,7 @@ export default function HistoricalExtremes({ weatherData }) {
       {/* Wind Speed */}
       <div className="bg-slate-900 border border-slate-800 rounded-xl p-4 flex flex-col items-center justify-center shadow-md">
         <span className="text-xs text-slate-500 uppercase tracking-widest mb-1">Maximum Wind Speed</span>
-        <span className="text-3xl text-orange-400 font-bold">{maxWind.toFixed(1)} m/s</span>
+        <span className="text-3xl text-orange-400 font-bold">{maxWind.toFixed(1)} km/h</span>
         <span className="text-xs text-slate-400 mt-2">Registered at {FormatDate(maxWindTime)}</span>
       </div>
 

@@ -1,21 +1,35 @@
 import { useState, useEffect } from "react";
-import { getWeatherData } from "./services/weatherAPI";
-import CurrentWeatherReading from "./components/weatherReading";
+import { getLiveWeather, getWeatherData } from "./services/weatherAPI";
 import WeatherChart from "./components/weatherChart";
 import HistoricalExtremes from "./components/historicalExtremes";
 import WeatherSkeleton from "./components/WeatherSkeleton";
+import LiveWeather from "./components/liveWeather";
 import "./index.css";
 
 export default function App() {
   const [weatherData, setWeatherData] = useState([]);
   const [loadWeatherData, setloadWeatherData] = useState(true);
   const [range, setRange] = useState("all");
+  const [liveWeatherData, setLiveWeatherData] = useState([]);
 
   useEffect(() => {
     getWeatherData().then((weatherdata_response) => {
       setWeatherData(weatherdata_response.data);
       setloadWeatherData(false);
     });
+
+    getLiveWeather().then((live_weather_response) => {
+      setLiveWeatherData(live_weather_response);
+    });
+
+    const interval = setInterval(() => {
+      getLiveWeather().then((live_weather_response) => {
+        setLiveWeatherData(live_weather_response);
+      });
+    }, 300000);
+
+    return () => clearInterval(interval);
+
   }, []);
 
   // Logic for filtering data
@@ -24,7 +38,6 @@ export default function App() {
 
     const hour = new Date();
     const registerDate = new Date(registro.time);
-
     const pastHours = (hour - registerDate) / (1000 * 60 * 60);
 
     if (range === "24h") {
@@ -36,6 +49,30 @@ export default function App() {
 
     return true;
   });
+
+  // Handler for exporting data
+  const handleExportCSV = () => {
+    if (!FilterData || FilterData.length === 0) return;
+
+    const headers = ["Time (Local)", "Temperature (°C)", "Relative Humidity (%)", "Wind Speed (km/h)"];
+
+    const rows = FilterData.map(registro => {
+      const date = new Date(registro.time).toLocaleString();
+      return `"${date}",${registro.temperature_2m},${registro.relativehumidity_2m},${registro.windspeed_10m}`;
+    });
+
+    const csvContent = [headers.join(","), ...rows].join("\n");
+
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", `meteoflow_data_${range}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-200 p-8 font-sans">
@@ -69,13 +106,12 @@ export default function App() {
         </a>
       </header>
 
+      <LiveWeather liveData={liveWeatherData} />
+
       {loadWeatherData ? (
         <WeatherSkeleton />
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* <div className="lg:col-span-1">
-            <CurrentWeatherReading weatherData={weatherData[0]} />
-          </div> */}
 
           <div className="lg:col-span-3 flex flex-col">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
@@ -83,26 +119,44 @@ export default function App() {
                 Historical Analysis
               </h2>
 
-              {/* Fillters */}
-              <div className="flex gap-1 bg-slate-900 p-1 rounded-lg border border-slate-800">
+              <div className="flex flex-wrap items-center gap-3 sm:gap-4">
+
+                <div className="flex gap-1 bg-slate-900 p-1 rounded-lg border border-slate-800">
+                  <button
+                    onClick={() => setRange("24h")}
+                    className={`px-4 py-1.5 text-sm rounded-md transition-all ${range === "24h" ? "bg-emerald-500 text-slate-950 font-bold shadow-sm" : "text-slate-400 hover:text-white hover:bg-slate-800"}`}
+                  >
+                    Last 24h
+                  </button>
+                  <button
+                    onClick={() => setRange("7d")}
+                    className={`px-4 py-1.5 text-sm rounded-md transition-all ${range === "7d" ? "bg-emerald-500 text-slate-950 font-bold shadow-sm" : "text-slate-400 hover:text-white hover:bg-slate-800"}`}
+                  >
+                    Last 7 Days
+                  </button>
+                  <button
+                    onClick={() => setRange("all")}
+                    className={`px-4 py-1.5 text-sm rounded-md transition-all ${range === "all" ? "bg-emerald-500 text-slate-950 font-bold shadow-sm" : "text-slate-400 hover:text-white hover:bg-slate-800"}`}
+                  >
+                    Full History
+                  </button>
+                </div>
+
+                {/* 2. La Línea de Separación (Ahora por fuera y centrada) */}
+                <div className="w-px h-8 bg-slate-700/60 hidden sm:block"></div>
+
+                {/* 3. El Botón de Exportar */}
                 <button
-                  onClick={() => setRange("24h")}
-                  className={`px-4 py-1.5 text-sm rounded-md transition-all ${range === "24h" ? "bg-emerald-500 text-slate-950 font-bold shadow-sm" : "text-slate-400 hover:text-white hover:bg-slate-800"}`}
+                  onClick={handleExportCSV}
+                  className="group flex items-center gap-2 px-4 py-2 bg-slate-800/50 hover:bg-slate-700 border border-slate-700 hover:border-slate-500 rounded-lg text-slate-300 text-sm font-medium transition-all"
+                  title="Download current data as CSV"
                 >
-                  Last 24h
+                  <svg className="w-4 h-4 text-emerald-400 group-hover:-translate-y-0.5 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                  </svg>
+                  Export CSV
                 </button>
-                <button
-                  onClick={() => setRange("7d")}
-                  className={`px-4 py-1.5 text-sm rounded-md transition-all ${range === "7d" ? "bg-emerald-500 text-slate-950 font-bold shadow-sm" : "text-slate-400 hover:text-white hover:bg-slate-800"}`}
-                >
-                  Last 7 Days
-                </button>
-                <button
-                  onClick={() => setRange("all")}
-                  className={`px-4 py-1.5 text-sm rounded-md transition-all ${range === "all" ? "bg-emerald-500 text-slate-950 font-bold shadow-sm" : "text-slate-400 hover:text-white hover:bg-slate-800"}`}
-                >
-                  Full History
-                </button>
+
               </div>
             </div>
 
