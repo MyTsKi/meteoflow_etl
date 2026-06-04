@@ -37,21 +37,24 @@ export default function WeatherChart({ weatherData }) {
         data: CronologicalData.map(registro => registro.temperature_2m),
         borderColor: '#34d399',
         backgroundColor: 'rgba(52, 211, 153, 0.2)',
-        tension: 0.4
+        tension: 0.4,
+        pointHitRadius: 25
       },
       {
         label: 'Relative Humidity (%)',
         data: CronologicalData.map(registro => registro.relativehumidity_2m),
         borderColor: '#60a5fa',
         backgroundColor: 'rgba(96, 165, 250, 0.2)',
-        tension: 0.4
+        tension: 0.4,
+        pointHitRadius: 25
       },
       {
         label: 'Wind Speed (km/h)',
         data: CronologicalData.map(registro => registro.windspeed_10m),
         borderColor: '#faa560',
         backgroundColor: 'rgba(250, 165, 96, 0.2)',
-        tension: 0.4
+        tension: 0.4,
+        pointHitRadius: 25
       }
     ],
   };
