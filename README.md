@@ -35,33 +35,33 @@ Check out the live dashboard here: **https://meteoflow.vercel.app/**
 ### PostgreSQL
 Make sure your PostgreSQL database has the `time` column set as the Primary Key for the Python upsert logic to work:
 
-"ALTER TABLE weather_history ADD PRIMARY KEY (time)";
+"ALTER TABLE weather_history ADD PRIMARY KEY (time);"
 
 ### Python
 
 Install the required libraries
 
-pip install httpx pandas sqlalchemy "psycopg[binary]" python-dotenv
+"pip install httpx pandas sqlalchemy "psycopg[binary]" python-dotenv"
 
 Run the ETL script to populate your database
 
-python main.py
+"python main.py"
 
 ### Backend Node
 
-cd backend
+"cd backend"
 
 Install Express, pg, cors, and dotenv
 
-pnpm install
+"pnpm install"
 
 Start the development server
 
-pnpm run dev
+"pnpm run dev"
 
 ### Frontend React
 
-cd frontend
+"cd frontend"
 
 Install Vite, React, TailwindCSS, and Chart.js
 
