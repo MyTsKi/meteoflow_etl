@@ -30,5 +30,11 @@ jobs:
           cd data_pipeline
           python extract_weather.py
 
-      - name: Evitar que GitHub apague la automatización (Keepalive)
-        uses: gautamkrishnar/keepalive-workflow@v2
+      - name: 5. Guardar registro para evitar suspensión de GitHub
+        run: |
+          date > last_etl.txt
+          git config --global user.name "GitHub Action Bot"
+          git config --global user.email "action@github.com"
+          git add last_etl.txt
+          git commit -m "Registro automático: ETL ejecutado exitosamente" || echo "Nada que comitear"
+          git push
