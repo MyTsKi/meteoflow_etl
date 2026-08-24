@@ -29,3 +29,6 @@ jobs:
         run: |
           cd data_pipeline
           python extract_weather.py
+
+      - name: Evitar que GitHub apague la automatización (Keepalive)
+        uses: gautamkrishnar/keepalive-workflow@v2
