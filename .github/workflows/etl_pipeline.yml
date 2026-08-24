@@ -5,6 +5,9 @@ on:
     - cron: '23 0,6,12,18 * * *'
   workflow_dispatch: 
 
+permissions:
+  contents: write
+
 jobs:
   extraccion-y-carga:
     runs-on: ubuntu-latest
